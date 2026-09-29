@@ -1,14 +1,15 @@
 import { Component, input } from '@angular/core';
 import { ProcessStep } from '../core/portfolio.model';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 @Component({
   selector: 'app-process',
   standalone: true,
-  imports: [TrackViewDirective],
+  imports: [TrackViewDirective, RevealDirective],
   styleUrl: './process.component.scss',
   template: `
-    <section class="process" appTrackView="process" aria-labelledby="process-title">
+    <section class="process" appTrackView="process" appReveal aria-labelledby="process-title">
       <div class="wrap">
         <h2 id="process-title" class="section-title">From Jira ticket to production</h2>
         <p class="process__intro">Every ticket goes through the same six steps, in this order.</p>

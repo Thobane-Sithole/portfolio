@@ -10,13 +10,15 @@ import { ProcessComponent } from './sections/process.component';
 import { TestimonialsComponent } from './sections/testimonials.component';
 import { ContactComponent } from './sections/contact.component';
 import { StreamTickerComponent } from './sections/stream-ticker.component';
+import { SkillsBandComponent } from './sections/skills-band.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     HeroComponent, WorkComponent, AboutComponent, ServicesComponent,
-    ProcessComponent, TestimonialsComponent, ContactComponent, StreamTickerComponent
+    ProcessComponent, TestimonialsComponent, ContactComponent, StreamTickerComponent,
+    SkillsBandComponent
   ],
   styleUrl: './app.component.scss',
   template: `
@@ -37,6 +39,9 @@ import { StreamTickerComponent } from './sections/stream-ticker.component';
     <main id="main">
       @if (portfolio(); as p) {
         <app-hero id="top" [profile]="p.profile" [projectCount]="p.projects.length" />
+        @if (p.stack.length) {
+          <app-skills-band [stack]="p.stack" />
+        }
         <app-work id="work" [projects]="p.projects" />
         <app-about id="about" [profile]="p.profile" [stack]="p.stack" />
         <app-services [services]="p.services" />

@@ -1,0 +1,476 @@
+diff --git a/frontend/src/app/app.component.ts b/frontend/src/app/app.component.ts
+index 6c5238d..1ed4c89 100644
+--- a/frontend/src/app/app.component.ts
++++ b/frontend/src/app/app.component.ts
+@@ -10,13 +10,15 @@ import { ProcessComponent } from './sections/process.component';
+ import { TestimonialsComponent } from './sections/testimonials.component';
+ import { ContactComponent } from './sections/contact.component';
+ import { StreamTickerComponent } from './sections/stream-ticker.component';
++import { SkillsBandComponent } from './sections/skills-band.component';
+ 
+ @Component({
+   selector: 'app-root',
+   standalone: true,
+   imports: [
+     HeroComponent, WorkComponent, AboutComponent, ServicesComponent,
+-    ProcessComponent, TestimonialsComponent, ContactComponent, StreamTickerComponent
++    ProcessComponent, TestimonialsComponent, ContactComponent, StreamTickerComponent,
++    SkillsBandComponent
+   ],
+   styleUrl: './app.component.scss',
+   template: `
+@@ -37,6 +39,9 @@ import { StreamTickerComponent } from './sections/stream-ticker.component';
+     <main id="main">
+       @if (portfolio(); as p) {
+         <app-hero id="top" [profile]="p.profile" [projectCount]="p.projects.length" />
++        @if (p.stack.length) {
++          <app-skills-band [stack]="p.stack" />
++        }
+         <app-work id="work" [projects]="p.projects" />
+         <app-about id="about" [profile]="p.profile" [stack]="p.stack" />
+         <app-services [services]="p.services" />
+diff --git a/frontend/src/app/core/reveal.directive.ts b/frontend/src/app/core/reveal.directive.ts
+new file mode 100644
+index 0000000..bd862b5
+--- /dev/null
++++ b/frontend/src/app/core/reveal.directive.ts
+@@ -0,0 +1,42 @@
++import { Directive, ElementRef, OnDestroy, afterNextRender, inject, input } from '@angular/core';
++
++/**
++ * Fades and lifts the host in the first time it scrolls into view.
++ * The hidden state is only added here, in JS, so content stays visible when
++ * IntersectionObserver is missing or the visitor prefers reduced motion.
++ * Elements already on screen at load are left alone so nothing flashes.
++ *
++ * Usage: <li appReveal [revealDelay]="i"> (delay steps are 80ms, for staggering)
++ */
++@Directive({ selector: '[appReveal]', standalone: true })
++export class RevealDirective implements OnDestroy {
++  readonly revealDelay = input(0);
++
++  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
++  private observer?: IntersectionObserver;
++
++  constructor() {
++    afterNextRender(() => {
++      const el = this.host.nativeElement;
++      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
++      if (reduceMotion || typeof IntersectionObserver === 'undefined') return;
++
++      const rect = el.getBoundingClientRect();
++      if (rect.top < innerHeight * 0.9 && rect.bottom > 0) return;
++
++      el.style.setProperty('--reveal-delay', `${this.revealDelay() * 80}ms`);
++      el.classList.add('reveal');
++      this.observer = new IntersectionObserver(entries => {
++        if (entries.some(e => e.isIntersecting)) {
++          el.classList.add('is-visible');
++          this.observer?.disconnect();
++        }
++      }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
++      this.observer.observe(el);
++    });
++  }
++
++  ngOnDestroy(): void {
++    this.observer?.disconnect();
++  }
++}
+diff --git a/frontend/src/app/sections/about.component.ts b/frontend/src/app/sections/about.component.ts
+index 641ed4f..a514ad1 100644
+--- a/frontend/src/app/sections/about.component.ts
++++ b/frontend/src/app/sections/about.component.ts
+@@ -1,14 +1,15 @@
+ import { Component, input } from '@angular/core';
+ import { Profile, StackGroup } from '../core/portfolio.model';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ @Component({
+   selector: 'app-about',
+   standalone: true,
+-  imports: [TrackViewDirective],
++  imports: [TrackViewDirective, RevealDirective],
+   styleUrl: './about.component.scss',
+   template: `
+-    <section class="about" appTrackView="about" aria-labelledby="about-title">
++    <section class="about" appTrackView="about" appReveal aria-labelledby="about-title">
+       <div class="wrap about__grid">
+         <div>
+           <h2 id="about-title" class="section-title">Why the back-end, and how I think about it</h2>
+diff --git a/frontend/src/app/sections/contact.component.ts b/frontend/src/app/sections/contact.component.ts
+index 8a29656..87cf8d9 100644
+--- a/frontend/src/app/sections/contact.component.ts
++++ b/frontend/src/app/sections/contact.component.ts
+@@ -5,16 +5,17 @@ import { ContactRequest, FieldErrors, Profile } from '../core/portfolio.model';
+ import { PortfolioService } from '../core/portfolio.service';
+ import { EventStreamService } from '../core/event-stream.service';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ type FormState = 'idle' | 'sending' | 'sent' | 'failed';
+ 
+ @Component({
+   selector: 'app-contact',
+   standalone: true,
+-  imports: [ReactiveFormsModule, TrackViewDirective],
++  imports: [ReactiveFormsModule, TrackViewDirective, RevealDirective],
+   styleUrl: './contact.component.scss',
+   template: `
+-    <section class="section wrap contact" appTrackView="contact" aria-labelledby="contact-title">
++    <section class="section wrap contact" appTrackView="contact" appReveal aria-labelledby="contact-title">
+       <div class="contact__intro">
+         <h2 id="contact-title" class="section-title">Hiring for a Java role? Let's talk.</h2>
+         <p>I'm looking for a team where I can own real back-end work and keep learning. Send a message and I'll reply within two working days.</p>
+diff --git a/frontend/src/app/sections/hero.component.scss b/frontend/src/app/sections/hero.component.scss
+index 50e4eb0..9ffed29 100644
+--- a/frontend/src/app/sections/hero.component.scss
++++ b/frontend/src/app/sections/hero.component.scss
+@@ -1,5 +1,59 @@
+ :host { display: block; }
+ 
++/* Full-width navy band. Tokens are redefined locally so the shared
++   .button, .dot and text styles flip to light-on-navy automatically. */
++.hero-band {
++  --ink: #eef1f4;
++  --chalk: #16202e;
++  --slate: #a6b1c2;
++  --line: rgb(238 241 244 / 0.18);
++  --cobalt-ink: #16202e;
++  background: #16202e;
++  color: var(--ink);
++  overflow: hidden;
++}
++
++@media (prefers-color-scheme: dark) {
++  .hero-band { background: #0a0f18; }
++}
++
++:host-context([data-theme='dark']) .hero-band { background: #0a0f18; }
++
++/* Primary call to action in marigold */
++.hero__actions .button:first-child {
++  background: #f2b632;
++  border-color: #f2b632;
++  color: #16202e;
++
++  &:hover { background: #eef1f4; border-color: #eef1f4; }
++}
++
++/* Load-in: everything after the name follows in order */
++.hero__who,
++.hero__headline,
++.hero__status,
++.hero__actions {
++  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
++}
++.hero__who { animation-delay: 60ms; }
++.hero__headline { animation-delay: 420ms; }
++.hero__status { animation-delay: 520ms; }
++.hero__actions { animation-delay: 620ms; }
++
++.stream {
++  animation: panel-in 1s cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
++}
++
++@keyframes fade-up {
++  from { opacity: 0; transform: translateY(18px); }
++  to { opacity: 1; transform: none; }
++}
++
++@keyframes panel-in {
++  from { opacity: 0; transform: translateY(32px) scale(0.98); }
++  to { opacity: 1; transform: none; }
++}
++
+ .hero {
+   display: grid;
+   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+@@ -16,12 +70,40 @@
+   margin-bottom: 1.25rem;
+ }
+ 
+-.hero__headline {
+-  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.4rem);
++.hero__name {
++  font-size: clamp(3.2rem, 1.8rem + 6.5vw, 7.5rem);
+   font-weight: 800;
+-  letter-spacing: -0.035em;
+-  line-height: 1;
+-  max-width: 16ch;
++  letter-spacing: -0.045em;
++  line-height: 0.9;
++}
++
++/* Each word sits in its own clipped line and rises into view */
++.hero__word {
++  display: block;
++  overflow: hidden;
++  padding-bottom: 0.06em;
++}
++
++.hero__word-inner {
++  display: block;
++  animation: word-rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
++}
++
++.hero__word:last-child .hero__word-inner { color: #f2b632; }
++
++@keyframes word-rise {
++  from { transform: translateY(105%); }
++  to { transform: none; }
++}
++
++.hero__headline {
++  margin-top: 1.75rem;
++  font-family: var(--font-display);
++  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
++  font-weight: 700;
++  line-height: 1.2;
++  letter-spacing: -0.02em;
++  max-width: 24ch;
+ }
+ 
+ .hero__status {
+@@ -56,7 +138,9 @@
+   overflow: hidden;
+   font-family: var(--font-mono);
+   font-size: 0.8rem;
+-  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--cobalt) 55%, transparent);
++  background: #0b121d;
++  border: 1px solid rgb(238 241 244 / 0.14);
++  box-shadow: 18px 18px 0 #2f54e0, 0 30px 60px -20px rgb(0 0 0 / 0.5);
+ }
+ 
+ .stream__bar {
+diff --git a/frontend/src/app/sections/hero.component.ts b/frontend/src/app/sections/hero.component.ts
+index 9c85135..551fc8d 100644
+--- a/frontend/src/app/sections/hero.component.ts
++++ b/frontend/src/app/sections/hero.component.ts
+@@ -1,4 +1,4 @@
+-import { Component, ElementRef, OnDestroy, OnInit, inject, input } from '@angular/core';
++import { Component, ElementRef, OnDestroy, OnInit, computed, inject, input } from '@angular/core';
+ import { DatePipe } from '@angular/common';
+ import { Profile } from '../core/portfolio.model';
+ import { EventStreamService } from '../core/event-stream.service';
+@@ -9,10 +9,16 @@ import { EventStreamService } from '../core/event-stream.service';
+   imports: [DatePipe],
+   styleUrl: './hero.component.scss',
+   template: `
++    <div class="hero-band">
+     <section class="hero wrap">
+       <div class="hero__copy">
+         <p class="hero__who">{{ profile().role }} in {{ profile().location }}</p>
+-        <h1 class="hero__headline">{{ profile().headline }}</h1>
++        <h1 class="hero__name" [attr.aria-label]="profile().name">
++          @for (word of nameWords(); track $index) {
++            <span class="hero__word" aria-hidden="true"><span class="hero__word-inner" [style.animation-delay.ms]="140 + $index * 110">{{ word }}</span></span>
++          }
++        </h1>
++        <p class="hero__headline">{{ profile().headline }}</p>
+         <p class="hero__status"><span class="dot" aria-hidden="true"></span>{{ profile().availability }}</p>
+         <div class="hero__actions">
+           <a class="button" href="#work" (click)="stream.emit('CtaClicked', 'target=work')">See my work</a>
+@@ -43,12 +49,16 @@ import { EventStreamService } from '../core/event-stream.service';
+         </figcaption>
+       </figure>
+     </section>
++    </div>
+   `
+ })
+ export class HeroComponent implements OnInit, OnDestroy {
+   readonly profile = input.required<Profile>();
+   readonly projectCount = input(0);
+ 
++  /** The name split into words so each one can rise in on its own line. */
++  readonly nameWords = computed(() => this.profile().name.trim().split(/\s+/));
++
+   readonly stream = inject(EventStreamService);
+   private readonly host = inject(ElementRef<HTMLElement>);
+   private timers: ReturnType<typeof setTimeout>[] = [];
+diff --git a/frontend/src/app/sections/process.component.ts b/frontend/src/app/sections/process.component.ts
+index 5f7fc91..c6106b0 100644
+--- a/frontend/src/app/sections/process.component.ts
++++ b/frontend/src/app/sections/process.component.ts
+@@ -1,14 +1,15 @@
+ import { Component, input } from '@angular/core';
+ import { ProcessStep } from '../core/portfolio.model';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ @Component({
+   selector: 'app-process',
+   standalone: true,
+-  imports: [TrackViewDirective],
++  imports: [TrackViewDirective, RevealDirective],
+   styleUrl: './process.component.scss',
+   template: `
+-    <section class="process" appTrackView="process" aria-labelledby="process-title">
++    <section class="process" appTrackView="process" appReveal aria-labelledby="process-title">
+       <div class="wrap">
+         <h2 id="process-title" class="section-title">From Jira ticket to production</h2>
+         <p class="process__intro">Every ticket goes through the same six steps, in this order.</p>
+diff --git a/frontend/src/app/sections/services.component.ts b/frontend/src/app/sections/services.component.ts
+index 4f67121..5da0ac5 100644
+--- a/frontend/src/app/sections/services.component.ts
++++ b/frontend/src/app/sections/services.component.ts
+@@ -1,14 +1,15 @@
+ import { Component, input } from '@angular/core';
+ import { Service } from '../core/portfolio.model';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ @Component({
+   selector: 'app-services',
+   standalone: true,
+-  imports: [TrackViewDirective],
++  imports: [TrackViewDirective, RevealDirective],
+   styleUrl: './services.component.scss',
+   template: `
+-    <section class="section wrap" appTrackView="services" aria-labelledby="services-title">
++    <section class="section wrap" appTrackView="services" appReveal aria-labelledby="services-title">
+       <h2 id="services-title" class="section-title">What I work on</h2>
+       <div class="services">
+         @for (s of services(); track s.title) {
+diff --git a/frontend/src/app/sections/skills-band.component.ts b/frontend/src/app/sections/skills-band.component.ts
+new file mode 100644
+index 0000000..640194d
+--- /dev/null
++++ b/frontend/src/app/sections/skills-band.component.ts
+@@ -0,0 +1,66 @@
++import { Component, computed, input } from '@angular/core';
++import { StackGroup } from '../core/portfolio.model';
++
++/**
++ * A marigold band of skills that scrolls sideways, fed from "stack" in
++ * portfolio.json. Pauses on hover; becomes a still, wrapped list when the
++ * visitor prefers reduced motion.
++ */
++@Component({
++  selector: 'app-skills-band',
++  standalone: true,
++  template: `
++    <div class="band" role="region" aria-label="Skills">
++      <ul class="band__track">
++        @for (item of loop(); track $index) {
++          <li class="band__item" [attr.aria-hidden]="$index >= items().length ? 'true' : null">{{ item }}</li>
++        }
++      </ul>
++    </div>
++  `,
++  styles: `
++    :host { display: block; }
++    .band {
++      overflow: hidden;
++      background: #f2b632;
++      color: #16202e;
++      border-block: 2px solid #16202e;
++    }
++    .band__track {
++      display: flex;
++      width: max-content;
++      margin: 0;
++      padding: 0.9rem 0;
++      list-style: none;
++      animation: slide 45s linear infinite;
++    }
++    .band:hover .band__track { animation-play-state: paused; }
++    .band__item {
++      display: flex;
++      align-items: center;
++      font: 700 clamp(1.2rem, 2.3vw, 1.7rem) / 1.2 var(--font-display);
++      letter-spacing: -0.02em;
++      white-space: nowrap;
++    }
++    .band__item::after {
++      content: '';
++      width: 0.42em;
++      height: 0.42em;
++      margin-inline: 1.1em;
++      border-radius: 50%;
++      background: currentColor;
++    }
++    @keyframes slide { to { transform: translateX(-50%); } }
++    @media (prefers-reduced-motion: reduce) {
++      .band__track { animation: none; flex-wrap: wrap; width: auto; padding-inline: var(--gutter); }
++      .band__item[aria-hidden='true'] { display: none; }
++    }
++  `
++})
++export class SkillsBandComponent {
++  readonly stack = input.required<StackGroup[]>();
++
++  readonly items = computed(() => [...new Set(this.stack().flatMap(g => g.items))]);
++  /** The list twice so the loop wraps around with no gap. */
++  readonly loop = computed(() => [...this.items(), ...this.items()]);
++}
+diff --git a/frontend/src/app/sections/testimonials.component.ts b/frontend/src/app/sections/testimonials.component.ts
+index b208aae..b3a5920 100644
+--- a/frontend/src/app/sections/testimonials.component.ts
++++ b/frontend/src/app/sections/testimonials.component.ts
+@@ -2,13 +2,14 @@ import { Component, computed, inject, input, signal } from '@angular/core';
+ import { Testimonial } from '../core/portfolio.model';
+ import { EventStreamService } from '../core/event-stream.service';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ @Component({
+   selector: 'app-testimonials',
+   standalone: true,
+-  imports: [TrackViewDirective],
++  imports: [TrackViewDirective, RevealDirective],
+   template: `
+-    <section class="section wrap" appTrackView="testimonials" aria-labelledby="t-title" aria-roledescription="carousel">
++    <section class="section wrap" appTrackView="testimonials" appReveal aria-labelledby="t-title" aria-roledescription="carousel">
+       <h2 id="t-title" class="section-title">What people I've worked with say</h2>
+ 
+       @if (current(); as t) {
+diff --git a/frontend/src/app/sections/work.component.ts b/frontend/src/app/sections/work.component.ts
+index f4d6f03..eaab7d0 100644
+--- a/frontend/src/app/sections/work.component.ts
++++ b/frontend/src/app/sections/work.component.ts
+@@ -2,19 +2,20 @@ import { Component, inject, input, signal } from '@angular/core';
+ import { Project } from '../core/portfolio.model';
+ import { EventStreamService } from '../core/event-stream.service';
+ import { TrackViewDirective } from '../core/track-view.directive';
++import { RevealDirective } from '../core/reveal.directive';
+ 
+ @Component({
+   selector: 'app-work',
+   standalone: true,
+-  imports: [TrackViewDirective],
++  imports: [TrackViewDirective, RevealDirective],
+   styleUrl: './work.component.scss',
+   template: `
+     <section class="section wrap" appTrackView="work" aria-labelledby="work-title">
+-      <h2 id="work-title" class="section-title">Things I've built and shipped</h2>
++      <h2 id="work-title" class="section-title" appReveal>Things I've built and shipped</h2>
+ 
+       <ul class="projects">
+-        @for (project of projects(); track project.slug) {
+-          <li class="project" [class.project--open]="open() === project.slug">
++        @for (project of projects(); track project.slug; let i = $index) {
++          <li class="project" appReveal [revealDelay]="i % 3" [class.project--open]="open() === project.slug">
+             <div class="project__head">
+               <h3 class="project__title">
+                 <button type="button"
+diff --git a/frontend/src/styles.scss b/frontend/src/styles.scss
+index 96a421a..2cbd5a7 100644
+--- a/frontend/src/styles.scss
++++ b/frontend/src/styles.scss
+@@ -160,3 +160,14 @@ img { max-width: 100%; display: block; }
+   html { scroll-behavior: auto; }
+   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+ }
++
++/* Scroll reveal (class added by RevealDirective) ------------------------ */
++.reveal {
++  opacity: 0;
++  transform: translateY(28px);
++  transition:
++    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
++    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms);
++
++  &.is-visible { opacity: 1; transform: none; }
++}

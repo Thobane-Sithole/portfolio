@@ -1,5 +1,59 @@
 :host { display: block; }
 
+/* Full-width navy band. Tokens are redefined locally so the shared
+   .button, .dot and text styles flip to light-on-navy automatically. */
+.hero-band {
+  --ink: #eef1f4;
+  --chalk: #16202e;
+  --slate: #a6b1c2;
+  --line: rgb(238 241 244 / 0.18);
+  --cobalt-ink: #16202e;
+  background: #16202e;
+  color: var(--ink);
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-band { background: #0a0f18; }
+}
+
+:host-context([data-theme='dark']) .hero-band { background: #0a0f18; }
+
+/* Primary call to action in marigold */
+.hero__actions .button:first-child {
+  background: #f2b632;
+  border-color: #f2b632;
+  color: #16202e;
+
+  &:hover { background: #eef1f4; border-color: #eef1f4; }
+}
+
+/* Load-in: everything after the name follows in order */
+.hero__who,
+.hero__headline,
+.hero__status,
+.hero__actions {
+  animation: fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero__who { animation-delay: 60ms; }
+.hero__headline { animation-delay: 420ms; }
+.hero__status { animation-delay: 520ms; }
+.hero__actions { animation-delay: 620ms; }
+
+.stream {
+  animation: panel-in 1s cubic-bezier(0.16, 1, 0.3, 1) 300ms both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(32px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
@@ -16,12 +70,40 @@
   margin-bottom: 1.25rem;
 }
 
-.hero__headline {
-  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.4rem);
+.hero__name {
+  font-size: clamp(3.2rem, 1.8rem + 6.5vw, 7.5rem);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1;
-  max-width: 16ch;
+  letter-spacing: -0.045em;
+  line-height: 0.9;
+}
+
+/* Each word sits in its own clipped line and rises into view */
+.hero__word {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.hero__word-inner {
+  display: block;
+  animation: word-rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__word:last-child .hero__word-inner { color: #f2b632; }
+
+@keyframes word-rise {
+  from { transform: translateY(105%); }
+  to { transform: none; }
+}
+
+.hero__headline {
+  margin-top: 1.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  max-width: 24ch;
 }
 
 .hero__status {
@@ -56,7 +138,9 @@
   overflow: hidden;
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--cobalt) 55%, transparent);
+  background: #0b121d;
+  border: 1px solid rgb(238 241 244 / 0.14);
+  box-shadow: 18px 18px 0 #2f54e0, 0 30px 60px -20px rgb(0 0 0 / 0.5);
 }
 
 .stream__bar {

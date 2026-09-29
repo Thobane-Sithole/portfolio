@@ -5,16 +5,17 @@ import { ContactRequest, FieldErrors, Profile } from '../core/portfolio.model';
 import { PortfolioService } from '../core/portfolio.service';
 import { EventStreamService } from '../core/event-stream.service';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 type FormState = 'idle' | 'sending' | 'sent' | 'failed';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [ReactiveFormsModule, TrackViewDirective],
+  imports: [ReactiveFormsModule, TrackViewDirective, RevealDirective],
   styleUrl: './contact.component.scss',
   template: `
-    <section class="section wrap contact" appTrackView="contact" aria-labelledby="contact-title">
+    <section class="section wrap contact" appTrackView="contact" appReveal aria-labelledby="contact-title">
       <div class="contact__intro">
         <h2 id="contact-title" class="section-title">Hiring for a Java role? Let's talk.</h2>
         <p>I'm looking for a team where I can own real back-end work and keep learning. Send a message and I'll reply within two working days.</p>

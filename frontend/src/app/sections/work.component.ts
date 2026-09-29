@@ -2,19 +2,20 @@ import { Component, inject, input, signal } from '@angular/core';
 import { Project } from '../core/portfolio.model';
 import { EventStreamService } from '../core/event-stream.service';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 @Component({
   selector: 'app-work',
   standalone: true,
-  imports: [TrackViewDirective],
+  imports: [TrackViewDirective, RevealDirective],
   styleUrl: './work.component.scss',
   template: `
     <section class="section wrap" appTrackView="work" aria-labelledby="work-title">
-      <h2 id="work-title" class="section-title">Things I've built and shipped</h2>
+      <h2 id="work-title" class="section-title" appReveal>Things I've built and shipped</h2>
 
       <ul class="projects">
-        @for (project of projects(); track project.slug) {
-          <li class="project" [class.project--open]="open() === project.slug">
+        @for (project of projects(); track project.slug; let i = $index) {
+          <li class="project" appReveal [revealDelay]="i % 3" [class.project--open]="open() === project.slug">
             <div class="project__head">
               <h3 class="project__title">
                 <button type="button"

@@ -1,14 +1,15 @@
 import { Component, input } from '@angular/core';
 import { Profile, StackGroup } from '../core/portfolio.model';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [TrackViewDirective],
+  imports: [TrackViewDirective, RevealDirective],
   styleUrl: './about.component.scss',
   template: `
-    <section class="about" appTrackView="about" aria-labelledby="about-title">
+    <section class="about" appTrackView="about" appReveal aria-labelledby="about-title">
       <div class="wrap about__grid">
         <div>
           <h2 id="about-title" class="section-title">Why the back-end, and how I think about it</h2>

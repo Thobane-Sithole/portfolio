@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, inject, input } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, computed, inject, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Profile } from '../core/portfolio.model';
 import { EventStreamService } from '../core/event-stream.service';
@@ -9,10 +9,16 @@ import { EventStreamService } from '../core/event-stream.service';
   imports: [DatePipe],
   styleUrl: './hero.component.scss',
   template: `
+    <div class="hero-band">
     <section class="hero wrap">
       <div class="hero__copy">
         <p class="hero__who">{{ profile().role }} in {{ profile().location }}</p>
-        <h1 class="hero__headline">{{ profile().headline }}</h1>
+        <h1 class="hero__name" [attr.aria-label]="profile().name">
+          @for (word of nameWords(); track $index) {
+            <span class="hero__word" aria-hidden="true"><span class="hero__word-inner" [style.animation-delay.ms]="140 + $index * 110">{{ word }}</span></span>
+          }
+        </h1>
+        <p class="hero__headline">{{ profile().headline }}</p>
         <p class="hero__status"><span class="dot" aria-hidden="true"></span>{{ profile().availability }}</p>
         <div class="hero__actions">
           <a class="button" href="#work" (click)="stream.emit('CtaClicked', 'target=work')">See my work</a>
@@ -43,11 +49,15 @@ import { EventStreamService } from '../core/event-stream.service';
         </figcaption>
       </figure>
     </section>
+    </div>
   `
 })
 export class HeroComponent implements OnInit, OnDestroy {
   readonly profile = input.required<Profile>();
   readonly projectCount = input(0);
+
+  /** The name split into words so each one can rise in on its own line. */
+  readonly nameWords = computed(() => this.profile().name.trim().split(/\s+/));
 
   readonly stream = inject(EventStreamService);
   private readonly host = inject(ElementRef<HTMLElement>);

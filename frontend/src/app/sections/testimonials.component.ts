@@ -2,13 +2,14 @@ import { Component, computed, inject, input, signal } from '@angular/core';
 import { Testimonial } from '../core/portfolio.model';
 import { EventStreamService } from '../core/event-stream.service';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 @Component({
   selector: 'app-testimonials',
   standalone: true,
-  imports: [TrackViewDirective],
+  imports: [TrackViewDirective, RevealDirective],
   template: `
-    <section class="section wrap" appTrackView="testimonials" aria-labelledby="t-title" aria-roledescription="carousel">
+    <section class="section wrap" appTrackView="testimonials" appReveal aria-labelledby="t-title" aria-roledescription="carousel">
       <h2 id="t-title" class="section-title">What people I've worked with say</h2>
 
       @if (current(); as t) {

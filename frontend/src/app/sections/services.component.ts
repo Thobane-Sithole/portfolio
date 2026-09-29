@@ -1,14 +1,15 @@
 import { Component, input } from '@angular/core';
 import { Service } from '../core/portfolio.model';
 import { TrackViewDirective } from '../core/track-view.directive';
+import { RevealDirective } from '../core/reveal.directive';
 
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [TrackViewDirective],
+  imports: [TrackViewDirective, RevealDirective],
   styleUrl: './services.component.scss',
   template: `
-    <section class="section wrap" appTrackView="services" aria-labelledby="services-title">
+    <section class="section wrap" appTrackView="services" appReveal aria-labelledby="services-title">
       <h2 id="services-title" class="section-title">What I work on</h2>
       <div class="services">
         @for (s of services(); track s.title) {
