@@ -1,0 +1,23 @@
+server:
+  # Render injects PORT; fall back to 8080 locally
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json
+
+spring:
+  application:
+    name: portfolio
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+portfolio:
+  contact:
+    # Messages are kept in memory; Render's free tier has no persistent disk.
+    max-stored-messages: 200
+    # Protects GET /api/contact/messages. Set CONTACT_ADMIN_TOKEN in Render.
+    admin-token: ${CONTACT_ADMIN_TOKEN:change-me-locally}

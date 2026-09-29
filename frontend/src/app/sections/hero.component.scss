@@ -1,0 +1,112 @@
+:host { display: block; }
+
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: center;
+  padding-block: clamp(3.5rem, 9vw, 7rem) var(--section-space);
+
+  @media (max-width: 56rem) { grid-template-columns: 1fr; }
+}
+
+.hero__who {
+  color: var(--slate);
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.hero__headline {
+  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1;
+  max-width: 16ch;
+}
+
+.hero__status {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.75rem;
+  font-weight: 500;
+}
+
+.dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--marigold);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--marigold) 30%, transparent);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+
+/* Event stream panel ---------------------------------------------------- */
+.stream {
+  margin: 0;
+  background: var(--stream-bg);
+  color: var(--stream-ink);
+  border-radius: 18px;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  box-shadow: 0 30px 60px -30px color-mix(in srgb, var(--cobalt) 55%, transparent);
+}
+
+.stream__bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--stream-ink) 12%, transparent);
+  color: var(--stream-dim);
+}
+
+.stream__title { color: var(--stream-ink); }
+
+.stream__list {
+  list-style: none;
+  margin: 0;
+  padding: 0.6rem 0;
+  height: 17rem;
+
+  @media (max-width: 56rem) { height: 12rem; }
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.stream__row {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 0.9rem;
+  padding: 0.3rem 1.1rem;
+  animation: arrive 0.45s ease-out;
+
+  time { color: var(--stream-dim); }
+}
+
+.stream__name { color: #9fb4ff; }
+.stream__attrs { color: var(--stream-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.stream__row--you {
+  background: color-mix(in srgb, var(--marigold) 12%, transparent);
+  .stream__name { color: var(--marigold); }
+}
+
+.stream__caption {
+  padding: 0.9rem 1.1rem 1.1rem;
+  font-family: var(--font-body);
+  font-size: var(--step--1);
+  color: var(--stream-dim);
+  border-top: 1px solid color-mix(in srgb, var(--stream-ink) 12%, transparent);
+}
+
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(-6px); background: color-mix(in srgb, var(--cobalt) 35%, transparent); }
+  to { opacity: 1; transform: none; }
+}

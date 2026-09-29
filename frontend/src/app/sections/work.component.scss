@@ -1,0 +1,99 @@
+.projects {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 2px solid var(--ink);
+}
+
+.project {
+  border-bottom: 1px solid var(--line);
+}
+
+.project__head {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) 2.5rem;
+  gap: 1.5rem;
+  align-items: baseline;
+  padding: clamp(1.4rem, 3vw, 2rem) 0;
+
+  &:hover .project__title button { color: var(--cobalt); }
+
+  @media (max-width: 44rem) {
+    grid-template-columns: minmax(0, 1fr) 2.5rem;
+    .project__summary { grid-column: 1; grid-row: 2; }
+  }
+}
+
+.project__title {
+  font-size: var(--step-3);
+  font-weight: 700;
+
+  button {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    /* Whole row is the click target */
+    &::after { content: ''; position: absolute; inset: 0; }
+  }
+}
+
+.project__summary { color: var(--slate); }
+
+.project__toggle {
+  justify-self: end;
+  position: relative;
+  width: 1.4rem;
+  height: 1.4rem;
+
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2px;
+    background: currentColor;
+    transition: transform 0.2s ease;
+  }
+  &::after { transform: rotate(90deg); }
+}
+
+.project--open .project__toggle::after { transform: rotate(0deg); }
+
+.project__body {
+  display: grid;
+  gap: 1rem;
+  padding: 0 0 2rem;
+  margin-left: auto;
+  width: min(100%, 44rem);
+  animation: open 0.25s ease-out;
+
+  &[hidden] { display: none; }
+}
+
+.project__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.project__links {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: 600;
+
+  a { color: var(--cobalt); }
+}
+
+@keyframes open {
+  from { opacity: 0; transform: translateY(-6px); }
+}

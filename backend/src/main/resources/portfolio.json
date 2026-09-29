@@ -1,0 +1,124 @@
+{
+  "profile": {
+    "name": "Thobane Sithole",
+    "role": "Software Developer",
+    "headline": "I build Java back-ends that stay calm when the traffic doesn't.",
+    "location": "Pretoria, South Africa",
+    "availability": "Open to graduate and junior developer roles",
+    "about": [
+      "I'm a Java developer who likes the parts of a system most people never see: the services, the events moving between them, and the tests that prove they still work after Friday's deploy.",
+      "I trained through the Geeks4Learning learnership and work in a Scrum team, picking up Jira tickets, clarifying requirements with my tech lead before I write a line, and shipping in small, reviewable pieces.",
+      "My day-to-day stack is Java 21, Spring Boot, PostgreSQL, Docker and Kubernetes, with JUnit and Mockito keeping me honest."
+    ],
+    "principle": "If I can't explain why a line of code exists, it doesn't get merged.",
+    "email": "you@example.com",
+    "github": "https://github.com/your-username",
+    "linkedin": "https://www.linkedin.com/in/your-profile",
+    "cvUrl": ""
+  },
+  "projects": [
+    {
+      "slug": "intella",
+      "title": "INTELLA",
+      "summary": "A full-stack web app I renamed, containerised and deployed end to end.",
+      "problem": "Took an existing codebase through a rebrand, pushed it to GitHub and set up automatic deploys.",
+      "tech": ["TypeScript", "GitHub", "Vercel"],
+      "repoUrl": "",
+      "liveUrl": ""
+    },
+    {
+      "slug": "payments-events",
+      "title": "Payment events service",
+      "summary": "Spring Boot microservices that talk through events instead of blocking REST calls.",
+      "problem": "Showed how an order service and a payment service stay consistent when one of them is down.",
+      "tech": ["Java 21", "Spring Boot", "Kafka", "PostgreSQL", "Docker"],
+      "repoUrl": "",
+      "liveUrl": ""
+    },
+    {
+      "slug": "task-api",
+      "title": "Task tracker API",
+      "summary": "A REST API with validation, paging and a full JUnit and Mockito test suite.",
+      "problem": "Practised clean layering: controller, service and repository, each tested in isolation.",
+      "tech": ["Spring Boot", "Spring Data JPA", "JUnit 5", "Mockito"],
+      "repoUrl": "",
+      "liveUrl": ""
+    },
+    {
+      "slug": "portfolio",
+      "title": "This portfolio",
+      "summary": "Angular front-end served by a Spring Boot API, shipped as one Docker image on Render.",
+      "problem": "Content comes from a single JSON file and the contact form is validated on both sides.",
+      "tech": ["Angular 18", "Spring Boot 3", "Docker", "Render"],
+      "repoUrl": "",
+      "liveUrl": ""
+    }
+  ],
+  "services": [
+    {
+      "title": "Back-end services",
+      "promise": "APIs that do one job well.",
+      "detail": "REST endpoints in Spring Boot with validation, clear error responses and sensible layering.",
+      "tags": ["Java 21", "Spring Boot", "REST"]
+    },
+    {
+      "title": "Event-driven design",
+      "promise": "Services that don't wait on each other.",
+      "detail": "Publishing and consuming events so one slow service doesn't take the rest down with it.",
+      "tags": ["Microservices", "Messaging", "Idempotency"]
+    },
+    {
+      "title": "Data and persistence",
+      "promise": "Schemas that survive the second feature.",
+      "detail": "PostgreSQL modelling, JPA mappings and queries that stay fast as the tables grow.",
+      "tags": ["PostgreSQL", "JPA", "SQL"]
+    },
+    {
+      "title": "Testing and delivery",
+      "promise": "Proof it works before it ships.",
+      "detail": "Unit tests with JUnit and Mockito, containerised builds with Docker and deploys to Kubernetes.",
+      "tags": ["JUnit", "Mockito", "Docker", "Kubernetes"]
+    }
+  ],
+  "process": [
+    {
+      "title": "Read the ticket",
+      "promise": "Understand the ask before touching code.",
+      "detail": "I pick up the Jira ticket and note what's clear, what's assumed and what's missing."
+    },
+    {
+      "title": "Clarify",
+      "promise": "Questions are cheaper than rewrites.",
+      "detail": "Anything unclear goes to the tech lead early, in stand-up or straight after it."
+    },
+    {
+      "title": "Design",
+      "promise": "Sketch the change.",
+      "detail": "Which services, which tables, which events, and what could break."
+    },
+    {
+      "title": "Build and test",
+      "promise": "Small commits, real tests.",
+      "detail": "Code and JUnit tests together, with Mockito to keep each unit isolated."
+    },
+    {
+      "title": "Review",
+      "promise": "Another pair of eyes.",
+      "detail": "A focused pull request that explains why, not only what."
+    },
+    {
+      "title": "Ship",
+      "promise": "Deployed, then checked.",
+      "detail": "Built into a container, deployed, and verified against the ticket's acceptance criteria."
+    }
+  ],
+  "stack": [
+    { "label": "Languages", "items": ["Java 21", "SQL", "TypeScript"] },
+    { "label": "Frameworks", "items": ["Spring", "Spring Boot", "Angular"] },
+    { "label": "Data", "items": ["PostgreSQL", "Spring Data JPA"] },
+    { "label": "Testing", "items": ["JUnit 5", "Mockito"] },
+    { "label": "Delivery", "items": ["Maven", "Docker", "Kubernetes", "Git"] },
+    { "label": "Ways of working", "items": ["Scrum", "Jira", "Code review"] }
+  ],
+  "testimonials": []
+}
