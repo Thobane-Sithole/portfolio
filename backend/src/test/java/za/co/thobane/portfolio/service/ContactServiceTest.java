@@ -2,10 +2,12 @@ package za.co.thobane.portfolio.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.mail.javamail.JavaMailSender;
 import za.co.thobane.portfolio.model.ContactMessage;
 import za.co.thobane.portfolio.model.ContactRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class ContactServiceTest {
 
@@ -13,7 +15,7 @@ class ContactServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ContactService(new ContactProperties(2, "secret"));
+        service = new ContactService(new ContactProperties(2, "secret", "owner@example.com"), mock(JavaMailSender.class));
     }
 
     @Test

@@ -8,6 +8,14 @@ server:
 spring:
   application:
     name: portfolio
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 management:
   endpoints:
@@ -17,7 +25,6 @@ management:
 
 portfolio:
   contact:
-    # Messages are kept in memory; Render's free tier has no persistent disk.
     max-stored-messages: 200
-    # Protects GET /api/contact/messages. Set CONTACT_ADMIN_TOKEN in Render.
     admin-token: ${CONTACT_ADMIN_TOKEN:change-me-locally}
+    owner-email: ${OWNER_EMAIL:nqikazi150@gmail.com}
