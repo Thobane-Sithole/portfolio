@@ -52,6 +52,33 @@
       "tech": ["Angular 18", "Spring Boot 3", "Docker", "Render"],
       "repoUrl": "",
       "liveUrl": ""
+    },
+    {
+      "slug": "day-ready",
+      "title": "Day Ready",
+      "summary": "A dashboard web application deployed on Vercel.",
+      "problem": "",
+      "tech": ["Vercel"],
+      "repoUrl": "",
+      "liveUrl": "https://day-ready-rose.vercel.app/dashboard"
+    },
+    {
+      "slug": "swimple",
+      "title": "Swimple",
+      "summary": "A web application deployed on Vercel.",
+      "problem": "",
+      "tech": ["Vercel"],
+      "repoUrl": "",
+      "liveUrl": "https://swimple-sable.vercel.app"
+    },
+    {
+      "slug": "herd-web",
+      "title": "Herd Web",
+      "summary": "A web application deployed on Vercel.",
+      "problem": "",
+      "tech": ["Vercel"],
+      "repoUrl": "",
+      "liveUrl": "https://herd-web.vercel.app"
     }
   ],
   "services": [
