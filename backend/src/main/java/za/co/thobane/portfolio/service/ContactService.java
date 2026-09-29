@@ -55,7 +55,7 @@ public class ContactService {
 
     private void sendNotification(ContactMessage message) {
         if (mailUsername.isBlank()) {
-            log.debug("MAIL_USERNAME not set — skipping email notification");
+            log.warn("MAIL_USERNAME is not set — skipping email notification for message {}", message.id());
             return;
         }
 
