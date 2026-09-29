@@ -31,6 +31,8 @@ public class ContactService {
         this.properties = properties;
         this.mailSender = mailSender;
         this.mailUsername = mailUsername;
+        log.info("Mail notification: {}",
+                mailUsername.isBlank() ? "DISABLED (MAIL_USERNAME not set)" : "ENABLED via " + mailUsername);
     }
 
     public ContactMessage receive(ContactRequest request) {
