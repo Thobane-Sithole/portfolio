@@ -11,18 +11,18 @@
       "My day-to-day stack is Java 21, Spring Boot, PostgreSQL, Docker and Kubernetes, with JUnit and Mockito keeping me honest."
     ],
     "principle": "If I can't explain why a line of code exists, it doesn't get merged.",
-    "email": "you@example.com",
-    "github": "https://github.com/your-username",
-    "linkedin": "https://www.linkedin.com/in/your-profile",
+    "email": "nqikazi150@gmail.com",
+    "github": "https://github.com/Thobane-sithole",
+    "linkedin": "https://www.linkedin.com/in/thobane-sithole",
     "cvUrl": ""
   },
   "projects": [
     {
       "slug": "intella",
       "title": "INTELLA",
-      "summary": "A full-stack web app I renamed, containerised and deployed end to end.",
-      "problem": "Took an existing codebase through a rebrand, pushed it to GitHub and set up automatic deploys.",
-      "tech": ["TypeScript", "GitHub", "Vercel"],
+      "summary": "A full-stack web app, containerised and deployed end to end.",
+      "problem": "It was part of my AI Fluency project assigned to me at Geeks4Learning",
+      "tech": ["TypeScript", "GitHub", "Docker/Rancher", "Kafka", "neo4jaura", "Groq","Vercel"],
       "repoUrl": "",
       "liveUrl": ""
     },
