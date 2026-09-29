@@ -15,7 +15,7 @@ class ContactServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new ContactService(new ContactProperties(2, "secret", "owner@example.com"), mock(JavaMailSender.class));
+        service = new ContactService(new ContactProperties(2, "secret", "owner@example.com"), mock(JavaMailSender.class), "");
     }
 
     @Test

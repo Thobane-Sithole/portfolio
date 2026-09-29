@@ -2,6 +2,7 @@ package za.co.thobane.portfolio.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,10 +23,14 @@ public class ContactService {
     private final Deque<ContactMessage> messages = new ConcurrentLinkedDeque<>();
     private final ContactProperties properties;
     private final JavaMailSender mailSender;
+    private final String mailUsername;
 
-    public ContactService(ContactProperties properties, JavaMailSender mailSender) {
+    public ContactService(ContactProperties properties,
+                          JavaMailSender mailSender,
+                          @Value("${spring.mail.username:}") String mailUsername) {
         this.properties = properties;
         this.mailSender = mailSender;
+        this.mailUsername = mailUsername;
     }
 
     public ContactMessage receive(ContactRequest request) {
@@ -49,16 +54,14 @@ public class ContactService {
     }
 
     private void sendNotification(ContactMessage message) {
-        String username = mailSender instanceof org.springframework.mail.javamail.JavaMailSenderImpl impl
-                ? impl.getUsername() : null;
-        if (username == null || username.isBlank()) {
-            log.debug("Mail not configured — skipping email notification");
+        if (mailUsername.isBlank()) {
+            log.debug("MAIL_USERNAME not set — skipping email notification");
             return;
         }
 
         try {
             SimpleMailMessage mail = new SimpleMailMessage();
-            mail.setFrom(username);
+            mail.setFrom(mailUsername);
             mail.setTo(properties.ownerEmail());
             mail.setReplyTo(message.email());
             mail.setSubject("Portfolio contact from " + message.name());
@@ -72,7 +75,7 @@ public class ContactService {
             mailSender.send(mail);
             log.info("Notification email sent for message {}", message.id());
         } catch (MailException e) {
-            log.error("Failed to send notification email for message {}: {}", message.id(), e.getMessage());
+            log.error("Failed to send notification email for message {}", message.id(), e);
         }
     }
 }
