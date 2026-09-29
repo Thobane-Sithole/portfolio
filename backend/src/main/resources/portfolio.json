@@ -3,12 +3,12 @@
     "name": "Thobane Sithole",
     "role": "Software Developer",
     "headline": "I build Java back-ends that stay calm when the traffic doesn't.",
-    "location": "Pretoria, South Africa",
+    "location": "Johannesburg, South Africa",
     "availability": "Open to graduate and junior developer roles",
     "about": [
       "I'm a Java developer who likes the parts of a system most people never see: the services, the events moving between them, and the tests that prove they still work after Friday's deploy.",
       "I trained through the Geeks4Learning learnership and work in a Scrum team, picking up Jira tickets, clarifying requirements with my tech lead before I write a line, and shipping in small, reviewable pieces.",
-      "My day-to-day stack is Java 21, Spring Boot, PostgreSQL, Docker and Kubernetes, with JUnit and Mockito keeping me honest."
+      "My day-to-day stack is Java, Spring Boot, PostgreSQL, Docker and Kubernetes, Kafka, with JUnit and Mockito keeping me honest."
     ],
     "principle": "If I can't explain why a line of code exists, it doesn't get merged.",
     "email": "nqikazi150@gmail.com",
